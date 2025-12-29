@@ -1,49 +1,157 @@
-body {
-  background: #1e1e1e;
-  color: #eaeaea;
-  font-family: Arial, sans-serif;
+:root {
+  --bg: #141414;
+  --panel: #1d1d1d;
+  --panel2: #232323;
+  --border: #333;
+  --text: #eaeaea;
+  --muted: #bdbdbd;
+  --accent: #5aa9ff;
+  --danger: #ff5a5a;
+  --radius: 10px;
 }
 
-header {
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.topbar {
   display: flex;
   justify-content: space-between;
-  padding: 10px 20px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #1b1b1b, #141414);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-button {
-  background: #3a3a3a;
-  color: white;
-  border: 1px solid #555;
-  padding: 5px 10px;
-  cursor: pointer;
+.title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
 }
+
+.app-title {
+  margin: 0;
+  font-size: 14px; /* 타이틀 작게 */
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.badge-version {
+  font-size: 12px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #111;
+  white-space: nowrap;
+}
+
+.actions { display: flex; gap: 8px; }
+
+button {
+  background: #2a2a2a;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+button:hover { border-color: #444; background: #303030; }
+button:active { transform: translateY(1px); }
+
+.table-section { padding: 12px 16px; }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--panel);
 }
 
-th, td {
-  border: 1px solid #444;
-  padding: 5px;
+thead th {
+  text-align: left;
+  font-size: 12px; /* 표 타이틀 크기 */
+  color: var(--muted);
+  font-weight: 700;
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel2);
 }
+
+tbody td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #262626;
+}
+
+tbody tr:hover { background: #191919; }
 
 input {
   width: 100%;
-  background: #2a2a2a;
-  color: white;
-  border: 1px solid #555;
+  background: #111;
+  color: var(--text);
+  border: 1px solid #2a2a2a;
+  padding: 8px 8px;
+  border-radius: 8px;
+  outline: none;
 }
+input:focus { border-color: var(--accent); }
 
 .result-section {
-  display: flex;
-  gap: 20px;
-  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 절반씩 */
+  gap: 12px;
+  padding: 0 16px 16px;
 }
 
-textarea {
-  width: 100%;
-  height: 200px;
-  background: #111;
-  color: #0f0;
+.box {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+}
+
+.box h2 {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  background: var(--panel2);
+}
+
+.output {
+  margin: 0;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #b8ffb8;
+  background: #0e0e0e;
+  flex: 1;
+  overflow: auto;          /* 내용 넘치면 스크롤 */
+  white-space: pre-wrap;    /* 줄바꿈 유지 + 자동 줄바꿈 */
+  word-break: break-word;
+}
+
+/* 반응형: 좁아지면 아래 양식은 세로로 */
+@media (max-width: 900px) {
+  .result-section {
+    grid-template-columns: 1fr;
+  }
 }
