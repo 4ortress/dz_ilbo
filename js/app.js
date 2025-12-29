@@ -11,7 +11,7 @@ document.getElementById("convert").addEventListener("click", () => {
 `1. 진행중인 업무
 ${daily.progress.join("\n")}
 
-2. 진행완료 업무(팀스 기준)
+2. 진행완료 업무(핌스 기준)
 ■ 패키지 메뉴
 ${daily.package.join("\n")}
 ■ 전용 메뉴
