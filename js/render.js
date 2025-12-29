@@ -2,23 +2,23 @@ function renderTable() {
   const tbody = document.querySelector("#taskTable tbody");
   tbody.innerHTML = "";
 
-  tasks.forEach((task, index) => {
+  tasks.forEach((task, idx) => {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td><input value="${task.menu}" data-key="menu" data-idx="${index}"></td>
-      <td><input value="${task.dueDate}" data-key="dueDate" data-idx="${index}"></td>
-      <td><input value="${task.content}" data-key="content" data-idx="${index}"></td>
-      <td><input value="${task.progress}" data-key="progress" data-idx="${index}"></td>
-      <td><input value="${task.client}" data-key="client" data-idx="${index}"></td>
-      <td><button onclick="removeRow(${index})">X</button></td>
+      <td><input data-idx="${idx}" data-key="menu" value="${task.menu}"></td>
+      <td><input data-idx="${idx}" data-key="dueDate" value="${task.dueDate}"></td>
+      <td><input data-idx="${idx}" data-key="content" value="${task.content}"></td>
+      <td><input data-idx="${idx}" data-key="progress" value="${task.progress}"></td>
+      <td><input data-idx="${idx}" data-key="client" value="${task.client}"></td>
+      <td><button class="btn-mini" onclick="removeRow(${idx})">X</button></td>
     `;
 
     tbody.appendChild(tr);
   });
 }
 
-function removeRow(index) {
-  tasks.splice(index, 1);
+function removeRow(idx) {
+  tasks.splice(idx, 1);
   renderTable();
 }
