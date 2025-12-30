@@ -12,11 +12,12 @@
 <header class="topbar">
   <div class="title-wrap">
     <h1 class="app-title">업무 보고 변환</h1>
-    <span class="badge-version" id="versionText">1.0.251229-01</span>
+    <span class="badge-version" id="versionText">1.0.251230-01</span>
   </div>
 
   <div class="actions">
     <button id="themeToggle" class="btn-ghost">☀ / 🌙</button>
+    <button id="prevReport" class="btn-ghost">전일보고</button>
     <button id="reset" class="btn-ghost">초기화</button>
     <button id="addRow">추가</button>
     <button id="convert" class="btn-primary">변환</button>
@@ -83,5 +84,23 @@
 <script src="js/render.js"></script>
 <script src="js/convert.js"></script>
 <script src="js/app.js"></script>
+
+<!-- 전일보고 팝업 -->
+<div id="prevModal" class="modal">
+  <div class="modal-box">
+    <h3>전일 보고 불러오기</h3>
+    <p class="modal-desc">
+      전일 보고한 <b>일일 업무 보고 양식</b> 내용을 입력해주세요.<br>
+    </p>
+
+    <textarea id="prevInput" placeholder=""></textarea>
+
+    <div class="modal-actions">
+      <button id="applyPrev" class="btn-primary">적용</button>
+      <button id="closePrev" class="btn-ghost">닫기</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
