@@ -32,3 +32,43 @@ function convertTasks() {
 
   return { daily, md, mdByClient };
 }
+
+function parseDailyReportToTasks(text) {
+  const lines = text.split("\n");
+  const parsed = [];
+
+  lines.forEach(line => {
+    line = line.trim();
+    if (!line.startsWith("-(개발)")) return;
+
+    // 진행중: 메뉴(12/29) : 내용(60%) - 고객사
+    let m1 = line.match(/-\(개발\)\s(.+?)\((\d{2}\/\d{2})\)\s:\s(.+?)\((\d+)%\)\s-\s(.+)/);
+
+    if (m1) {
+      parsed.push({
+        menu: m1[1],
+        dueDate: m1[2],
+        content: m1[3],
+        progress: m1[4],
+        client: m1[5]
+      });
+      return;
+    }
+
+    // 완료: 메뉴 : 내용 완료 - 고객사
+    let m2 = line.match(/-\(개발\)\s(.+?)\s:\s(.+?)\s완료\s-\s(.+)/);
+
+    if (m2) {
+      parsed.push({
+        menu: m2[1],
+        dueDate: "",        // 완료는 예정일 없음
+        content: m2[2],
+        progress: "100",
+        client: m2[3]
+      });
+    }
+  });
+
+  return parsed;
+}
+
