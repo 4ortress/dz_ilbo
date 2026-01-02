@@ -1,8 +1,47 @@
-function validate(task) {
-  if (!/^\d{2}\/\d{2}$/.test(task.dueDate)) throw "date";
-  const p = Number(task.progress);
-  if (!Number.isInteger(p) || p < 1 || p > 100) throw "progress";
+function normalizeDueDate(input) {
+  if (!input) return "";
+
+  const v = input.trim();
+
+  // MM/DD
+  if (/^\d{2}\/\d{2}$/.test(v)) {
+    return v;
+  }
+
+  // MMDD → MM/DD
+  if (/^\d{4}$/.test(v)) {
+    const mm = v.slice(0, 2);
+    const dd = v.slice(2, 4);
+    return `${mm}/${dd}`;
+  }
+
+  // MM-DD → MM/DD
+  if (/^\d{2}-\d{2}$/.test(v)) {
+    return v.replace("-", "/");
+  }
+
+  throw "date";
 }
+
+function validate(task) {
+  const p = Number(task.progress);
+
+  // 진행도 필수 + 범위 체크
+  if (!Number.isInteger(p) || p < 1 || p > 100) {
+    throw "progress";
+  }
+
+  // 🔴 진행도 100 미만이면 완료예정일 필수
+  if (p < 100) {
+    if (!task.dueDate || !task.dueDate.trim()) {
+      throw "date_required";
+    }
+
+    // 형식 정규화 + 검증
+    task.dueDate = normalizeDueDate(task.dueDate);
+  }
+}
+
 
 function convertTasks() {
   let daily = { progress: [], tomorrow: [], package: [], exclusive: [] };
@@ -12,15 +51,28 @@ function convertTasks() {
   tasks.forEach(task => {
     validate(task);
 
-    const client = task.client.trim() || "패키지";
+    const client = (task.client || "").trim() || "패키지";
     const p = Number(task.progress);
 
     if (p < 100) {
-      daily.progress.push(`-(개발) ${task.menu}(${task.dueDate}) : ${task.content}(${p}%) - ${client}`);
-      daily.tomorrow.push(`-(개발) ${task.menu}(${task.dueDate}) : ${task.content} - ${client}`);
+      daily.progress.push(
+        `-(개발) ${task.menu}(${task.dueDate}) : ${task.content}(${p}%) - ${client}`
+      );
+      daily.tomorrow.push(
+        `-(개발) ${task.menu}(${task.dueDate}) : ${task.content} - ${client}`
+      );
     } else {
       const line = `-(개발) ${task.menu} : ${task.content} 완료 - ${client}`;
-      client.includes("패키지") ? daily.package.push(line) : daily.exclusive.push(line);
+
+      // ✅ 진행도 100%일 때는 완료구분(패키지/전용) 선택값으로 분류
+      if (task.completeType === "PACKAGE") {
+        daily.package.push(line);
+      } else if (task.completeType === "EXCLUSIVE") {
+        daily.exclusive.push(line);
+      } else {
+        // 미선택 시 기본은 전용
+        daily.exclusive.push(line);
+      }
     }
 
     const mdLine = `[${task.menu} : ${task.content}(${p}%)]_[${client}]_[강촌]`;
@@ -50,6 +102,7 @@ function parseDailyReportToTasks(text) {
         dueDate: m1[2],
         content: m1[3],
         progress: m1[4],
+        completeType: "",
         client: m1[5]
       });
       return;
@@ -64,6 +117,7 @@ function parseDailyReportToTasks(text) {
         dueDate: "",        // 완료는 예정일 없음
         content: m2[2],
         progress: "100",
+        completeType: "",
         client: m2[3]
       });
     }
@@ -71,4 +125,3 @@ function parseDailyReportToTasks(text) {
 
   return parsed;
 }
-
