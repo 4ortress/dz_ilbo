@@ -16,9 +16,9 @@
   </div>
 
   <div class="actions">
-    <button id="themeToggle" class="btn-ghost">☀ / 🌙</button>
-    <button id="prevReport" class="btn-ghost">전일보고</button>
+    <button id="themeToggle" class="btn-ghost">☀️ / 🌙</button>
     <button id="reset" class="btn-ghost">초기화</button>
+    <button id="prevReport" class="btn-ghost">전일보고</button>
     <button id="addRow">추가</button>
     <button id="convert" class="btn-primary">변환</button>
   </div>
@@ -31,8 +31,9 @@
       <colgroup>
         <col style="width:20%">
         <col style="width:10%">
-        <col style="width:35%">
-        <col style="width:10%">
+        <col style="width:30%">
+        <col style="width:8%">
+        <col style="width:7%">
         <col style="width:20%">
         <col style="width:5%">
       </colgroup>
@@ -42,6 +43,7 @@
           <th>완료예정일 (MM/DD)</th>
           <th>내용</th>
           <th>진행도 (%)</th>
+          <th>완료구분</th>
           <th>고객사 (미입력시 패키지)</th>
           <th>삭제</th>
         </tr>
@@ -50,18 +52,18 @@
     </table>
   </section>
 
-  <!-- 변환 표시 -->
+  <!-- 변환 화살표 영역 -->
   <section class="convert-gap">
     <div class="line"></div>
     <div class="arrow">⇣ 변환 ⇣</div>
     <div class="line"></div>
   </section>
 
-  <!-- 결과 -->
+  <!-- 출력 -->
   <section class="result-section">
     <div class="box">
       <div class="box-head">
-        <h2>일일 업무 보고 양식 (패키지/전용 확인 必)</h2>
+        <h2>일일 업무 보고 양식</h2>
         <button id="copyDaily" class="btn-mini">복사</button>
       </div>
       <pre id="dailyReport" class="output"></pre>
