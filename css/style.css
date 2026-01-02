@@ -115,7 +115,6 @@ table {
 th, td {
   border-bottom: 1px solid var(--border);
   padding: 10px;
-  text-align: left;
   vertical-align: middle;
   font-size: 13px;
 }
@@ -123,6 +122,7 @@ th, td {
 th {
   color: var(--muted);
   font-weight: 700;
+  text-align: center;
 }
 
 input {
