@@ -14,14 +14,27 @@ function showSnack(msg) {
 }
 
 function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => showSnack("복사되었습니다"));
+  if (!text) { showSnack("복사할 내용이 없습니다"); return; }
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => showSnack("복사되었습니다"));
+  } else {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    showSnack("복사되었습니다");
+  }
 }
 
-function buildDaily(d) {
+function buildDailyText(d) {
   return `1. 진행중인 업무
 ${d.progress.join("\n")}
 
 2. 진행완료 업무(핌스 기준)
+
 ■ 패키지 메뉴
 ${d.package.join("\n")}
 
@@ -41,28 +54,30 @@ function resetPage() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // setVersion();
+  // setVersion(); // 필요 시 사용
   resetPage();
 
-  // theme
-  const saved = localStorage.getItem("theme") || "dark";
-  document.body.dataset.theme = saved;
-
+  // 테마 토글
   themeToggle.onclick = () => {
-    const next = document.body.dataset.theme === "dark" ? "light" : "dark";
-    document.body.dataset.theme = next;
-    localStorage.setItem("theme", next);
+    const now = document.body.getAttribute("data-theme");
+    document.body.setAttribute("data-theme", now === "dark" ? "light" : "dark");
   };
 
-  addRow.onclick = () => { tasks.push(createEmptyTask()); renderTable(); };
+  addRow.onclick = () => {
+    tasks.push(createEmptyTask());
+    renderTable();
+  };
+
   reset.onclick = resetPage;
 
   convert.onclick = () => {
     try {
       const { daily, md, mdByClient } = convertTasks();
-      dailyReport.textContent = buildDaily(daily);
+
+      dailyReport.textContent = buildDailyText(daily);
       mdReport.textContent = md.join("\n");
 
+      // MD 고객사별 복사 버튼
       mdCopyButtons.innerHTML = "";
       Object.keys(mdByClient).forEach(c => {
         const b = document.createElement("button");
@@ -78,19 +93,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
   copyDaily.onclick = () => copyText(dailyReport.textContent);
 
-  document.addEventListener("input", e => {
+  function handleChange(e) {
     const { idx, key } = e.target.dataset;
-    if (idx !== undefined) tasks[idx][key] = e.target.value;
-  });
+    if (idx === undefined || !key) return;
+
+    const prevValue = tasks[idx][key];
+    const newValue = e.target.value;
+
+    tasks[idx][key] = newValue;
+
+    // ✅ 진행도 입력 처리 (커서 유지 핵심 로직)
+    if (key === "progress") {
+      const prevNum = Number(prevValue);
+      const newNum = Number(newValue);
+
+      // 진행도 100 → 100 아님 (완료구분 비활성화 필요)
+      if (prevNum === 100 && newNum !== 100) {
+        tasks[idx].completeType = "";
+        renderTable();
+        return;
+      }
+
+      // 진행도 100 아님 → 100 (완료구분 활성화 필요)
+      if (prevNum !== 100 && newNum === 100) {
+        renderTable();
+        return;
+      }
+
+      // ❗ 그 외 (1 → 10 → 100 도중 단계 등)는 렌더링 안 함
+    }
+  }
 
 
+  document.addEventListener("input", handleChange);
+  document.addEventListener("change", handleChange);
+
+  // 전일보고 모달
   const prevReportBtn = document.getElementById("prevReport");
   const prevModal = document.getElementById("prevModal");
   const prevInput = document.getElementById("prevInput");
   const applyPrev = document.getElementById("applyPrev");
   const closePrev = document.getElementById("closePrev");
 
-  // 버튼/모달이 없으면 조용히 리턴 (파일 누락 방지)
   if (!prevReportBtn || !prevModal || !prevInput || !applyPrev || !closePrev) {
     console.warn("[전일보고] modal elements not found. Check index.html ids.");
     return;
@@ -105,7 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
     prevModal.classList.remove("show");
   };
 
-  // 모달 바깥 클릭 시 닫기(선택 사항인데 UX 좋아서 기본으로 넣음)
   prevModal.addEventListener("click", (e) => {
     if (e.target === prevModal) prevModal.classList.remove("show");
   });
@@ -124,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // ✅ 기존 내용 덮어쓰기(요구사항: 바인딩)
     tasks = parsed;
     renderTable();
 
