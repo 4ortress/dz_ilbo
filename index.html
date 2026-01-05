@@ -12,11 +12,12 @@
 <header class="topbar">
   <div class="title-wrap">
     <h1 class="app-title">업무 보고 변환</h1>
-    <span class="badge-version" id="versionText">1.0.260102-02</span>
+    <span class="badge-version" id="versionText">1.0.260105-01</span>
   </div>
 
   <div class="actions">
     <button id="themeToggle" class="btn-ghost">☀️ / 🌙</button>
+    <button id="presetOpen" class="btn-ghost">저장/불러오기</button>
     <button id="reset" class="btn-ghost">초기화</button>
     <button id="prevReport" class="btn-ghost">전일보고</button>
     <button id="addRow">추가</button>
@@ -101,6 +102,23 @@
       <button id="applyPrev" class="btn-primary">적용</button>
       <button id="closePrev" class="btn-ghost">닫기</button>
     </div>
+  </div>
+</div>
+
+<!-- 저장 / 불러오기 (Save 슬롯) -->
+<div id="presetModal" class="modal">
+  <div class="modal-box save-box">
+    <div class="save-head">
+      <h3>작업 저장 / 불러오기</h3>
+      <button id="presetClose" class="btn-ghost btn-mini">닫기</button>
+    </div>
+
+    <div class="save-new">
+      <input id="presetTitle" placeholder="저장할 제목 입력" />
+      <button id="presetSaveNew" class="btn-primary">새 슬롯 저장</button>
+    </div>
+
+    <div id="saveList" class="save-list"></div>
   </div>
 </div>
 
