@@ -53,6 +53,93 @@ function resetPage() {
   mdCopyButtons.innerHTML = "";
 }
 
+// ===== save slots (localStorage) =====
+const PRESET_KEY = "task_presets_v1";
+
+function readPresets() {
+  try {
+    return JSON.parse(localStorage.getItem(PRESET_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function writePresets(obj) {
+  localStorage.setItem(PRESET_KEY, JSON.stringify(obj || {}));
+}
+
+function formatSavedAt(ts) {
+  const d = new Date(ts);
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mi = String(d.getMinutes()).padStart(2, "0");
+  return `${mm}/${dd} ${hh}:${mi}`;
+}
+
+function renderSaveSlots() {
+  const list = document.getElementById("saveList");
+  const presets = readPresets();
+
+  list.innerHTML = "";
+
+  const titles = Object.keys(presets)
+    .sort((a, b) => (presets[b].savedAt || 0) - (presets[a].savedAt || 0));
+
+  if (!titles.length) {
+    list.innerHTML = `<div class="save-meta">저장된 작업이 없습니다.</div>`;
+    return;
+  }
+
+  titles.forEach(title => {
+    const slot = document.createElement("div");
+    slot.className = "save-slot";
+
+    slot.innerHTML = `
+      <div class="save-info">
+        <div class="save-title">${title}</div>
+        <div class="save-meta">
+          ${formatSavedAt(presets[title].savedAt)} · ${presets[title].tasks.length}건
+        </div>
+      </div>
+      <div class="save-actions">
+        <button class="btn-mini load">불러오기</button>
+        <button class="btn-mini overwrite">덮어쓰기</button>
+        <button class="btn-mini btn-ghost delete">삭제</button>
+      </div>
+    `;
+
+    slot.querySelector(".load").onclick = () => {
+      tasks = presets[title].tasks;
+      if (!tasks.length) tasks = [createEmptyTask()];
+      renderTable();
+      showSnack("불러왔습니다");
+      presetModal.classList.remove("show");
+    };
+
+    slot.querySelector(".overwrite").onclick = () => {
+      presets[title] = {
+        savedAt: Date.now(),
+        tasks: JSON.parse(JSON.stringify(tasks))
+      };
+      writePresets(presets);
+      renderSaveSlots();
+      showSnack("덮어쓰기 완료");
+    };
+
+    slot.querySelector(".delete").onclick = () => {
+      if (!confirm(`'${title}' 저장 데이터를 삭제할까요?`)) return;
+      delete presets[title];
+      writePresets(presets);
+      renderSaveSlots();
+      showSnack("삭제되었습니다");
+    };
+
+    list.appendChild(slot);
+  });
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   // setVersion(); // 필요 시 사용
   resetPage();
@@ -174,4 +261,44 @@ document.addEventListener("DOMContentLoaded", () => {
     prevInput.value = "";
     showSnack("전일 보고가 적용되었습니다");
   };
+
+  const presetOpen = document.getElementById("presetOpen");
+const presetModal = document.getElementById("presetModal");
+const presetClose = document.getElementById("presetClose");
+const presetTitle = document.getElementById("presetTitle");
+const presetSaveNew = document.getElementById("presetSaveNew");
+
+presetOpen.onclick = () => {
+  renderSaveSlots();
+  presetTitle.value = "";
+  presetModal.classList.add("show");
+};
+
+presetClose.onclick = () => {
+  presetModal.classList.remove("show");
+};
+
+presetModal.addEventListener("click", (e) => {
+  if (e.target === presetModal) presetModal.classList.remove("show");
+});
+
+presetSaveNew.onclick = () => {
+  const title = presetTitle.value.trim();
+  if (!title) return showSnack("제목을 입력해 주세요");
+
+  const presets = readPresets();
+  if (presets[title]) return showSnack("이미 존재하는 제목입니다");
+
+  presets[title] = {
+    savedAt: Date.now(),
+    tasks: JSON.parse(JSON.stringify(tasks))
+  };
+
+  writePresets(presets);
+  renderSaveSlots();
+  presetTitle.value = "";
+  showSnack("저장되었습니다");
+};
+
+
 });
