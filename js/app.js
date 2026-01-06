@@ -34,7 +34,6 @@ function buildDailyText(d) {
 ${d.progress.join("\n")}
 
 2. 진행완료 업무(핌스 기준)
-
 ■ 패키지 메뉴
 ${d.package.join("\n")}
 
