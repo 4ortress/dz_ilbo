@@ -29,19 +29,23 @@ function copyText(text) {
   }
 }
 
+function listOrEmpty(arr) {
+  return arr.length ? arr.join("\n") : "- 없음";
+}
+
 function buildDailyText(d) {
   return `1. 진행중인 업무
-${d.progress.join("\n")}
+${listOrEmpty(d.progress)}
 
 2. 진행완료 업무(핌스 기준)
 ■ 패키지 메뉴
-${d.package.join("\n")}
+${listOrEmpty(d.package)}
 
 ■ 전용 메뉴
-${d.exclusive.join("\n")}
+${listOrEmpty(d.exclusive)}
 
 3. 익일 업무
-${d.tomorrow.join("\n")}`;
+${listOrEmpty(d.tomorrow)}`;
 }
 
 function resetPage() {
