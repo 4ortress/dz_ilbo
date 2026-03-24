@@ -33,9 +33,15 @@ function listOrEmpty(arr) {
   return arr.length ? arr.join("\n") : "- 없음";
 }
 
+function listOrEmpty2(arr) {
+  return arr.length ? arr.join("\n") : "- 없으면 안됨";
+}
+
 function buildDailyText(d) {
+  let el = document.getElementById("nsmCnt");
+  let nsmText = el ? el.value : "0";
   return `1. 진행중인 업무
-${listOrEmpty(d.progress)}
+${listOrEmpty2(d.progress)}
 
 2. 진행완료 업무(핌스 기준)
 ■ 패키지 메뉴
@@ -45,7 +51,9 @@ ${listOrEmpty(d.package)}
 ${listOrEmpty(d.exclusive)}
 
 3. 익일 업무
-${listOrEmpty(d.tomorrow)}`;
+${listOrEmpty2(d.tomorrow)}
+
+4. 미처리 NSM 건수 - ${nsmText}건`;
 }
 
 function resetPage() {
