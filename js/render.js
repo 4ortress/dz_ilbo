@@ -7,10 +7,11 @@ function renderTable() {
     const progressNum = Number(task.progress);
     const isComplete = progressNum === 100;
 
+    task.completeType = "PACKAGE";
     // 진행도 100인데 완료구분이 없으면 기본값: PACKAGE
-    if (isComplete && !task.completeType) {
-      task.completeType = "PACKAGE";
-    }
+    // if (isComplete && !task.completeType) {
+    //   task.completeType = "PACKAGE";
+    // }
 
     tr.innerHTML = `
       <td>
@@ -30,13 +31,14 @@ function renderTable() {
       </td>
 
       <td>
-        <select data-idx="${idx}" data-key="completeType" ${isComplete ? "" : "disabled"}>
+        <select data-idx="${idx}" data-key="completeType">
           <option value="PACKAGE" ${task.completeType === "PACKAGE" ? "selected" : ""}>
             패키지
           </option>
           <option value="EXCLUSIVE" ${task.completeType === "EXCLUSIVE" ? "selected" : ""}>
             전용
           </option>
+          <option value="ERP" ${task.completeType === "ERP" ? "selected" : ""}>ERP금융서비스</option>
         </select>
       </td>
 
@@ -48,7 +50,7 @@ function renderTable() {
         <button class="btn-mini" onclick="removeRow(${idx})">X</button>
       </td>
     `;
-
+    // <select data-idx="${idx}" data-key="completeType" ${isComplete ? "" : "disabled"}></select>
     tbody.appendChild(tr);
   });
 }
