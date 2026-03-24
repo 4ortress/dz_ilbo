@@ -50,22 +50,36 @@ function convertTasks() {
 
   tasks.forEach(task => {
     validate(task);
-
-    const client = (task.client || "").trim() || "패키지";
+    
+    const client = (task.client || "").trim() || (task.completeType == 'PACKAGE' ? "패키지" : (task.completeType === "EXCLUSIVE" ? "입력필요" : "ERP금융서비스"));
     const p = Number(task.progress);
 
     if (p < 100) {
-      daily.progress.push(
-        `-(개발) ${task.menu}(${task.dueDate}) : ${task.content}(${p}%) - ${client}`
-      );
-      daily.tomorrow.push(
-        `-(개발) ${task.menu}(${task.dueDate}) : ${task.content} - ${client}`
-      );
+      if(task.completeType == 'PACKAGE') {
+        daily.progress.push(
+          `-(개발) ${task.menu}(${task.dueDate}) : ${task.content}(${p}%)`
+        );
+        daily.tomorrow.push(
+          `-(개발) ${task.menu}(${task.dueDate}) : ${task.content}`
+        );
+      }else {
+        daily.progress.push(
+          `-(개발) ${task.menu}(${task.dueDate}) : ${task.content}(${p}%) - ${client}`
+        );
+        daily.tomorrow.push(
+          `-(개발) ${task.menu}(${task.dueDate}) : ${task.content} - ${client}`
+        );
+      }
     } else {
-      const line = `-(개발) ${task.menu} : ${task.content} 완료 - ${client}`;
+      let line = '';
+      if(task.completeType == 'PACKAGE') {
+        line = `-(개발) ${task.menu} : ${task.content} 완료`;
+      }else {
+        line = `-(개발) ${task.menu} : ${task.content} 완료 - ${client}`;
+      }
 
       // ✅ 진행도 100%일 때는 완료구분(패키지/전용) 선택값으로 분류
-      if (task.completeType === "PACKAGE") {
+      if (task.completeType === "PACKAGE" || task.completeType === "ERP") {
         daily.package.push(line);
       } else if (task.completeType === "EXCLUSIVE") {
         daily.exclusive.push(line);
