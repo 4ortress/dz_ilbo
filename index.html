@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>업무 보고 변환</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="top-bar">
+      <div class="title-wrap">
+        <h1>업무 보고 변환</h1>
+        <span class="version">1.0.260507-01</span>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" id="themeToggleBtn" class="btn icon-btn" title="라이트/다크모드 전환">☀️ / 🌙</button>
+        <button type="button" class="btn" disabled>저장/불러오기(공사중)</button>
+        <button type="button" class="btn" disabled>전일보고(공사중)</button>
+        <button type="button" id="resetBtn" class="btn">초기화</button>
+        <button type="button" id="addRowBtn" class="btn">추가</button>
+        <button type="button" id="convertBtn" class="btn primary">변환</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="input-summary">
+        <label class="field-row">
+          <span>NSM 건수 :</span>
+          <input type="number" id="nsmCount" min="0" value="0" />
+          <span>건</span>
+        </label>
+
+        <label class="field-row major-field">
+          <span>주요업무 :</span>
+          <input type="text" id="majorTask" placeholder="주요 업무 현황에 출력할 내용을 입력하세요." />
+        </label>
+      </section>
+
+      <section class="table-card">
+        <div class="table-scroll">
+          <table id="taskTable">
+            <thead>
+              <tr>
+                <th class="col-menu">메뉴명</th>
+                <th class="col-date">완료예정일 (MM/DD)</th>
+                <th class="col-content">내용</th>
+                <th class="col-progress">진행도 (%)</th>
+                <th class="col-type">완료구분</th>
+                <th class="col-customer">고객사 (미입력 &gt; 패키지)</th>
+                <th class="col-delete">삭제</th>
+              </tr>
+            </thead>
+            <tbody id="taskTbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="divider">
+        <span>↧ 변환 ↧</span>
+      </div>
+
+      <section class="output-grid">
+        <article class="output-card">
+          <div class="output-header">
+            <h2>일일 업무 보고 양식</h2>
+            <button type="button" id="copyDailyBtn" class="btn small">복사</button>
+          </div>
+          <pre id="dailyOutput" class="output-box">변환 버튼을 눌러주세요.</pre>
+        </article>
+
+        <article class="output-card">
+          <div class="output-header md-header">
+            <h2>MD 양식</h2>
+            <div id="mdButtonArea" class="md-button-area"></div>
+          </div>
+          <pre id="mdOutput" class="output-box">변환 버튼을 눌러주세요.</pre>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast">✅ 복사되었습니다</div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
