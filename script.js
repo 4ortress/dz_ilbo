@@ -176,7 +176,7 @@ function buildLine(row, mode) {
   }
 
   if (mode === "complete") {
-    return `- (개발) ${row.menuName}${dueDatePart} : ${row.content} 완료${customerPart}`;
+    return `- (개발) ${row.menuName} : ${row.content} 완료${customerPart}`;
   }
 
   if (mode === "tomorrow") {
